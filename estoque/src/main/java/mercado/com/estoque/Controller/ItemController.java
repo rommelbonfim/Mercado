@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import mercado.com.estoque.DTO.ItemDto;
 import mercado.com.estoque.Service.ItemService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,12 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.net.URI;
 
 @RestController
 @RequestMapping("/Estoque")
 public class ItemController {
 
+    @Autowired
     private ItemService service;
 
     @GetMapping
@@ -54,6 +57,11 @@ public class ItemController {
         return ResponseEntity.ok(atualizado);
     }
 
+    @GetMapping("/{id}/valor")
+    public ResponseEntity<BigDecimal> obterPrecoProdutoPorId(@PathVariable Long id) {
+        BigDecimal valor = service.obterPrecoProdutoPorId(id);
+        return ResponseEntity.ok(valor);
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<ItemDto> remover(@PathVariable @NotNull Long id) {
         service.excluirItem(id);

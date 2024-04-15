@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class ItemService {
 
@@ -55,5 +57,12 @@ public class ItemService {
 
     public void excluirItem(Long id) {
         repository.deleteById(id);
+    }
+
+    public BigDecimal obterPrecoProdutoPorId(Long id) {
+        Item itemDto = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + id));
+
+        return itemDto.getValor();
     }
 }
