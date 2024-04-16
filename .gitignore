@@ -14,3 +14,9 @@ estoque/.mvn/wrapper/maven-wrapper.properties
 estoque/.mvn/wrapper/maven-wrapper.jar
 gateway/.mvn/wrapper/maven-wrapper.jar
 transacoes/.mvn/wrapper/maven-wrapper.properties
+transacoes/.mvn/wrapper/maven-wrapper.jar
+server/.mvn/wrapper/maven-wrapper.properties
+transacoes/.mvn/wrapper/maven-wrapper.jar
+server/.mvn/wrapper/maven-wrapper.jar
+gateway/.mvn/wrapper/maven-wrapper.jar
+estoque/.mvn/wrapper/maven-wrapper.jar

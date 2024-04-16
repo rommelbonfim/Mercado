@@ -44,7 +44,6 @@ public class ItemService {
     public ItemDto adcionarItem(ItemDto dto) {
         Item item = modelMapper.map(dto, Item.class);
         repository.save(item);
-
         return modelMapper.map(item, ItemDto.class);
     }
 
