@@ -1,6 +1,7 @@
 package mercado.com.estoque.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import mercado.com.estoque.DTO.ItemDto;
 import mercado.com.estoque.models.Item;
 import mercado.com.estoque.repository.ItemRepository;
@@ -63,5 +64,19 @@ public class ItemService {
                 .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + id));
 
         return itemDto.getValor();
+    }
+
+    @Transactional
+    public void atualizarEstoque(long idItem, int quantidade) {
+        Item item = repository.findById(idItem)
+                .orElseThrow(() -> new EntityNotFoundException("Item não encontrado: " + idItem));
+
+        int quantidadeAtual = item.getQuantidade();
+        int novaQuantidade = quantidadeAtual - quantidade;
+
+
+
+        item.setQuantidade(novaQuantidade);
+        repository.save(item);
     }
 }
