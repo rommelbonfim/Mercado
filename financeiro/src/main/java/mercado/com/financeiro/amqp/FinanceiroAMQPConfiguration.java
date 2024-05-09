@@ -30,6 +30,7 @@ public class FinanceiroAMQPConfiguration {
     public Queue filaAtualizaSaldo() {
         return QueueBuilder
                 .nonDurable("atualiza.saldo")
+                .deadLetterExchange("financeiro.dlx")
                 .build();
     }
 
@@ -45,6 +46,25 @@ public class FinanceiroAMQPConfiguration {
         return BindingBuilder
                 .bind(filaAtualizaSaldo())
                 .to(fanoutExchange());
+    }
+
+    @Bean
+    public FanoutExchange deadLetterExchange() {
+        return new FanoutExchange("financeiro.dlx");
+    }
+
+    @Bean
+    public Queue financeiroDlq() {
+        return QueueBuilder
+                .nonDurable("financeiro.dlq")
+                .build();
+    }
+
+    @Bean
+    public Binding bindDlxfinanceiro() {
+        return BindingBuilder
+                .bind(financeiroDlq())
+                .to(deadLetterExchange());
     }
 
     @Bean

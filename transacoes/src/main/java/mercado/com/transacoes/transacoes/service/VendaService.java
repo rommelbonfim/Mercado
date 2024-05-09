@@ -40,18 +40,23 @@ public class VendaService {
     }
 
     public VendaDto adcionarVenda(VendaDto dto) {
-        BigDecimal precoProduto = estoqueClient.obterPrecoProdutoPorId(dto.getIditem());
-
-        BigDecimal valorVenda = precoProduto.multiply(BigDecimal.valueOf(dto.getQuantidade()));
+        BigDecimal precoProduto;
+        BigDecimal valorVenda;
+        try {
+           precoProduto = estoqueClient.obterPrecoProdutoPorId(dto.getIditem());
+             valorVenda = precoProduto.multiply(BigDecimal.valueOf(dto.getQuantidade()));
+        } catch (Exception e) {
+            // Tratar a exceção adequadamente, por exemplo, lançando uma exceção personalizada
+            throw new RuntimeException("Produto com ID " + dto.getIditem() + " não encontrado.");
+        }
 
         dto.setValorvenda(valorVenda);
 
-        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "", new MensagemAtualizacaoEstoque(dto.getIditem(), dto.getQuantidade()));
-        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "", new MensagemRegistroTransacao( dto.getValorvenda()));
-
-
         Venda venda = modelMapper.map(dto, Venda.class);
         Venda vendaSalva = repository.save(venda);
+
+        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "", new MensagemAtualizacaoEstoque(dto.getIditem(), dto.getQuantidade()));
+        rabbitTemplate.convertAndSend(fanoutExchange.getName(), "", new MensagemRegistroTransacao( dto.getValorvenda()));
 
         return modelMapper.map(vendaSalva, VendaDto.class);
     }

@@ -30,6 +30,7 @@ public class EstoqueAMQPConfiguration {
     public Queue filaAtualizaEstoque() {
         return QueueBuilder
                 .nonDurable("atualiza.estoque")
+                .deadLetterExchange("atualizaestoque.dlx")
                 .build();
     }
 
@@ -45,6 +46,25 @@ public class EstoqueAMQPConfiguration {
         return BindingBuilder
                 .bind(filaAtualizaEstoque())
                 .to(fanoutExchange());
+    }
+
+    @Bean
+    public FanoutExchange deadLetterExchange() {
+        return new FanoutExchange("atualizaestoque.dlx");
+    }
+
+    @Bean
+    public Queue atualizaestoqueDlq() {
+        return QueueBuilder
+                .nonDurable("atualizaestoque.dlq")
+                .build();
+    }
+
+    @Bean
+    public Binding bindDlxatualizaEstoque() {
+        return BindingBuilder
+                .bind(atualizaestoqueDlq())
+                .to(deadLetterExchange());
     }
 
     @Bean
