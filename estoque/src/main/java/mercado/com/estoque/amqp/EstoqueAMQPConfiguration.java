@@ -37,6 +37,7 @@ public class EstoqueAMQPConfiguration {
         return container;
     }
 
+
     @Bean
     public Queue filaAtualizaEstoque() {
         return QueueBuilder
@@ -44,6 +45,7 @@ public class EstoqueAMQPConfiguration {
                 .deadLetterExchange("atualizaestoque.dlx")
                 .build();
     }
+
 
     @Bean
     public FanoutExchange fanoutExchange() {
