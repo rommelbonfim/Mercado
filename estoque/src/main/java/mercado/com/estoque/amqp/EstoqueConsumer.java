@@ -22,13 +22,7 @@ public class EstoqueConsumer {
         long idItem = mensagem.getIdItem();
         int quantidadeVendida = mensagem.getQuantidade();
 
-        try {
-            itemService.atualizarEstoque(idItem, quantidadeVendida);
-        } catch (Exception e) {
-            // Capturar a exceção específica lançada pelo itemService
-            String errorMessage = "Erro ao atualizar o estoque do item " + idItem + " com a quantidade " + quantidadeVendida + ". " + e.getMessage();
-            throw new RuntimeException(errorMessage, e);
-        }
+        itemService.atualizarEstoque(idItem, quantidadeVendida);
     }
 }
 

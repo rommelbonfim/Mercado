@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,31 +42,14 @@ public class EstoqueMessageListener implements MessageListener {
 
             // Chamar o método do EstoqueConsumer
             estoqueConsumer.receberMensagemAtualizacaoEstoque(mensagem);
-        } catch (Exception e) {
-            System.out.println("Exceção capturada: " + e.getMessage());
-
+        } catch (IOException e) {
             String errorMessage = e.getMessage();
             byte[] originalBody = message.getBody();
-            String originalMessage = new String(originalBody, StandardCharsets.UTF_8);
 
-            System.out.println("Mensagem original: " + originalMessage);
-
-            // Obter a mensagem de erro detalhada
-            String detailedErrorMessage;
-            if (e.getCause() != null && e.getCause().getMessage() != null) {
-                detailedErrorMessage = "Erro ao processar a mensagem: " + e.getCause().getMessage();
-            } else {
-                detailedErrorMessage = "Erro ao processar a mensagem: " + errorMessage;
-            }
-
-            System.out.println("Mensagem de erro detalhada: " + detailedErrorMessage);
-
-            // Criar um mapa com o corpo original e a mensagem de erro detalhada
+            // Criar um mapa com o corpo original e o erro
             Map<String, Object> messageData = new HashMap<>();
-            messageData.put("originalMessage", originalMessage);
-            messageData.put("detailedErrorMessage", detailedErrorMessage);
-
-            System.out.println("Mapa de mensagem: " + messageData);
+            messageData.put("originalMessage", new String(originalBody));
+            messageData.put("errorMessage", errorMessage);
 
             // Converter o mapa para JSON
             byte[] newBody;
@@ -79,8 +61,6 @@ public class EstoqueMessageListener implements MessageListener {
                 return;
             }
 
-            System.out.println("Novo corpo da mensagem: " + new String(newBody, StandardCharsets.UTF_8));
-
             // Criar uma nova mensagem com o corpo atualizado
             MessageProperties props = new MessageProperties();
             Message newMessage = MessageBuilder.withBody(newBody)
@@ -91,6 +71,4 @@ public class EstoqueMessageListener implements MessageListener {
             rabbitTemplate.send("atualizaestoque.dlq", newMessage);
         }
     }
-
 }
-
